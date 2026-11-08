@@ -6,18 +6,21 @@
 :root{--bg:#0b0e14;--card:#141924;--line:#222a38;--txt:#e6edf3;--dim:#8b98a9;--up:#3fb950;--dn:#f85149}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.55 -apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif}
-.wrap{max-width:680px;margin:0 auto;padding:18px 16px 50px}
+.wrap{max-width:900px;margin:0 auto;padding:18px 16px 50px}
 h1{font-size:15px;margin:0 0 3px;font-weight:600;color:#c9d4e0}
 .sub{color:var(--dim);font-size:12px;margin-bottom:14px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.cards{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-.hero{display:flex;align-items:baseline;gap:10px;margin:2px 0 4px}
-.hero b{font-size:40px;line-height:1;letter-spacing:-1px}
-.hero span{font-size:13px;color:var(--dim)}
+.tag{display:inline-block;font-size:11px;color:#8b98a9;border:1px solid var(--line);border-radius:999px;padding:2px 9px;margin-bottom:8px}
+.hero{display:flex;align-items:baseline;gap:8px;margin:2px 0 6px}
+.hero b{font-size:34px;line-height:1;letter-spacing:-1px}
+.hero span{font-size:12px;color:var(--dim)}
 .up{color:var(--up)}.dn{color:var(--dn)}.dim{color:var(--dim)}
-.row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.row{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
 .row:last-child{border:0}
 .row span{color:var(--dim)}.row b{font-variant-numeric:tabular-nums}
-.note{font-size:12px;color:var(--dim);margin-top:10px;line-height:1.5}
+.note{font-size:11.5px;color:var(--dim);margin-top:8px;line-height:1.45}
 details{margin-top:12px;border:1px solid var(--line);border-radius:10px;background:#101620}
 summary{cursor:pointer;padding:11px 14px;font-size:13px;color:#c9d4e0;outline:none}
 details .body{padding:0 14px 14px}
@@ -33,119 +36,122 @@ ul{margin:6px 0 0;padding-left:18px;color:#c9d4e0;font-size:13px} li{margin:4px 
 <h1>DOGE/USDT-SWAP · 当前指令</h1>
 <div class="sub" id="stamp">加载中…</div>
 
-<div class="card">
-  <div class="hero"><b id="side">—</b><span id="state"></span></div>
-  <div id="rows"></div>
-  <div class="note" id="note"></div>
+<div class="cards">
+  <div class="card" id="c4h"><span class="tag">4H 主策略 · 3% 风险</span><div class="dim">加载中…</div></div>
+  <div class="card" id="c1h"><span class="tag">1H 短线 · 1.5% 风险</span><div class="dim">加载中…</div></div>
 </div>
+
+<details><summary>规则（两条并行，各算各的仓）</summary><div class="body"><ul>
+<li><b>4H 主策略</b>：4H 收盘在 EMA200 上方只做多、下方只做空；站上前 20 根高点做多、跌破前 20 根低点做空；止损 2×ATR(4H)，止盈 3R；单笔 3% 风险。</li>
+<li><b>1H 短线</b>：1H 收盘在 EMA200 上方只做多、下方只做空；20 根通道突破进出；止损 1.5×ATR(1H)，止盈 3R；单笔 1.5% 风险。</li>
+<li>两条可以同时持仓，但同日同向合计风险不超过 4.5%；杠杆按强平 ≥ 3× 止损距离选，上限 10x。</li>
+<li>一天最多两笔（每条策略各自计数）；连续两笔止损当天停手；不加仓、不摊平。</li>
+</ul></div></details>
 
 <details><summary>三个周期（参考）</summary><div class="body">
 <table><thead><tr><th>周期</th><th>收盘</th><th>EMA20</th><th>EMA50</th><th>EMA200</th><th>ATR%</th><th>RSI</th></tr></thead><tbody id="tfrows"></tbody></table>
 </div></details>
 
-<details><summary>规则（4H 一条）</summary><div class="body"><ul>
-<li>4H 收盘在 EMA200 上方 → 只做多；下方 → 只做空。</li>
-<li>做多：4H 收盘站上前 20 根最高价；做空：跌破前 20 根最低价。收线才算。</li>
-<li>止损：进场价外侧 2×ATR(4H)。止盈：3 倍止损距离，一次全平。</li>
-<li>仓位：本金 × 3% ÷ 止损价差；杠杆按强平 ≥ 3× 止损距离选，上限 10x。</li>
-<li>一天最多两笔；连续两笔止损当天停手；不加仓、不摊平。</li>
-</ul></div></details>
-
 <details><summary>自己算别的仓位</summary><div class="body">
   <div class="g3" style="margin-bottom:10px">
     <div><label>本金</label><input id="eq" value="3900"></div>
     <div><label>风险 %</label><input id="rp" value="3"></div>
-    <div><label>杠杆</label><input id="lev" value="8"></div>
+    <div><label>杠杆</label><input id="lev" value="10"></div>
   </div>
   <div id="sizing" class="dim"></div>
 </div></details>
 
 <details><summary>版本</summary><div class="body">
-  <div class="row"><span>策略版本</span><b>v1 · 4H 通道突破 + EMA200 过滤</b></div>
-  <div class="row"><span>生效日期</span><b>2026-11-07</b></div>
+  <div class="row"><span>当前策略</span><b>v2 · 4H 主 + 1H 短（并行）</b></div>
+  <div class="row"><span>生效日期</span><b>2026-11-08</b></div>
   <div class="row"><span>数据源</span><b>OKX 公开接口 · 30 秒刷新</b></div>
+  <div class="dim" style="font-size:12px;margin-top:8px">历史：v1（11-07）只有 4H 一条规则。</div>
 </div></details>
 
-<div class="note">只读页面，不接任何密钥；行情每 30 秒自动刷新，指令随行情重算。</div>
+<div class="note">只读页面，不接任何密钥；行情每 30 秒自动刷新，两张卡各自重算。</div>
+</div>
 <script>
-const API="https://www.okx.com/api/v5";
-const INST="DOGE-USDT-SWAP";
+const API="https://www.okx.com/api/v5", INST="DOGE-USDT-SWAP";
+const STRATS=[
+  {id:"c4h", tf:"4H", ch:20, sm:2.0, rr:3, riskPct:3.0},
+  {id:"c1h", tf:"1H", ch:20, sm:1.5, rr:3, riskPct:1.5}
+];
 function ema(v,n){const k=2/(n+1);let e=v[0];for(let i=1;i<v.length;i++)e=v[i]*k+e*(1-k);return e}
 function atr(r,n=14){const t=[];for(let i=1;i<r.length;i++)t.push(Math.max(r[i].h-r[i].l,Math.abs(r[i].h-r[i-1].c),Math.abs(r[i].l-r[i-1].c)));let a=t.slice(0,n).reduce((x,y)=>x+y,0)/n;for(let i=n;i<t.length;i++)a=(a*(n-1)+t[i])/n;return a}
 function rsi(v,n=14){let g=0,l=0;for(let i=1;i<=n;i++){const d=v[i]-v[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)}let ag=g/n,al=l/n;for(let i=n+1;i<v.length;i++){const d=v[i]-v[i-1];ag=(ag*(n-1)+Math.max(d,0))/n;al=(al*(n-1)+Math.max(-d,0))/n}return al===0?100:100-100/(1+ag/al)}
 function parse(rows){return rows.map(r=>({h:+r[2],l:+r[3],c:+r[4],ok:r.length>8?r[8]==="1":true})).filter(r=>r.ok).reverse()}
-function order(sys,eq,rp){
-  const dist=Math.abs(sys.trigger-sys.stop),p=dist/sys.trigger;
-  const lev=Math.max(1,Math.min(10,Math.floor(1/(3*p))));
-  const riskU=eq*rp/100,qty=riskU/dist,notional=qty*sys.trigger,margin=notional/lev;
-  const liq=sys.bias==="short"?sys.trigger*(1+1/lev):sys.trigger*(1-1/lev);
-  return {side:sys.bias,status:sys.status,entry:+sys.trigger.toFixed(5),stop:+sys.stop.toFixed(5),
-    target:+sys.target.toFixed(5),stopPct:+(p*100).toFixed(2),contracts:+(qty/1000).toFixed(2),lev,
-    margin:+margin.toFixed(2),notional:+notional.toFixed(2),riskU:+riskU.toFixed(2),liq:+liq.toFixed(5),
-    liqX:+(Math.abs(sys.trigger-liq)/dist).toFixed(2),rr:+(Math.abs(sys.target-sys.trigger)/dist).toFixed(2)};
-}
 const f=(x,n=5)=>Number(x).toFixed(n);
-let O=null;
-function render(s){
-  const o=O;
-  document.getElementById("stamp").textContent="更新 "+new Date().toLocaleString("zh-CN",{hour12:false})+" · 现价 "+f(s.price)+"（"+(s.chg>=0?"+":"")+s.chg.toFixed(2)+"% 24h）";
-  const el=document.getElementById("side");
-  el.textContent=o.status==="waiting"?"等":(o.side==="short"?"做空":"做多");
-  el.className=o.status==="waiting"?"":(o.side==="short"?"dn":"up");
-  document.getElementById("state").textContent=o.status==="waiting"?"还没到价，先不开仓":"已触发，按下面执行";
-  document.getElementById("rows").innerHTML=`
-    <div class="row"><span>${o.status==="waiting"?"触发价（4H 收盘）":"开单价"}</span><b>${f(o.entry)}</b></div>
-    <div class="row"><span>方向</span><b>${o.side==="short"?"空":"多"}</b></div>
-    <div class="row"><span>仓位</span><b>${o.contracts} 张 · 保证金 ${o.margin} U</b></div>
-    <div class="row"><span>杠杆</span><b>${o.lev}x</b></div>
-    <div class="row"><span>止损</span><b>${f(o.stop)}（${o.stopPct}%）</b></div>
-    <div class="row"><span>止盈</span><b>${f(o.target)}（${o.rr}R）</b></div>`;
-  document.getElementById("note").textContent=o.status==="waiting"
-    ?`4H 收盘${o.side==="short"?"跌破":"站上"} ${f(o.entry)} 才进，下一根 4H 开盘市价。按 3900 本金、3% 风险，止损打掉亏 ${o.riskU} U；强平 ${f(o.liq)}，是止损距离的 ${o.liqX} 倍。`
-    :`按上面价位执行，止损打掉亏 ${o.riskU} U，到止盈赚 ${(o.riskU*o.rr).toFixed(0)} U。`;
-  document.getElementById("tfrows").innerHTML=["1D","4H","1H"].map(k=>{const v=s.tf[k];
-    return `<tr><td>${k}</td><td>${f(v.close)}</td><td>${f(v.ema20)}</td><td>${f(v.ema50)}</td><td>${f(v.ema200)}</td><td>${v.atrPct.toFixed(2)}%</td><td>${v.rsi.toFixed(1)}</td></tr>`}).join("");
-  sizing();
+
+function build(strat,rows,eq){
+  const c=rows.map(r=>r.c), a=atr(rows), e=ema(c,200), last=c[c.length-1];
+  const hi=Math.max(...rows.slice(-(strat.ch+1),-1).map(r=>r.h));
+  const lo=Math.min(...rows.slice(-(strat.ch+1),-1).map(r=>r.l));
+  const bias=last>e?"long":"short";
+  let trig,stop,tgt,status;
+  if(bias==="long"){trig=hi;status=last>hi?"long":"waiting";stop=trig-strat.sm*a;tgt=trig+strat.rr*strat.sm*a}
+  else{trig=lo;status=last<lo?"short":"waiting";stop=trig+strat.sm*a;tgt=trig-strat.rr*strat.sm*a}
+  const dist=Math.abs(trig-stop), p=dist/trig;
+  const lev=Math.max(1,Math.min(10,Math.floor(1/(3*p))));
+  const riskU=eq*strat.riskPct/100, qty=riskU/dist, notional=qty*trig, margin=notional/lev;
+  const liq=bias==="short"?trig*(1+1/lev):trig*(1-1/lev);
+  return {tf:strat.tf,bias,status,trig,stop,tgt,lev,riskU,qty:qty/1000,notional,margin,liq,
+    stopPct:p*100,liqX:Math.abs(liq-trig)/dist,rr:strat.rr,atr:a,ema200:e,hi,lo,last};
 }
-function sizing(){
-  const q=id=>+document.getElementById(id).value;
-  if(!O) return;
-  const dist=Math.abs(O.entry-O.stop),risk=q("eq")*q("rp")/100,qty=risk/dist,lev=q("lev")||1;
-  const notional=qty*O.entry,margin=notional/lev;
-  const liq=O.side==="short"?O.entry*(1+1/lev):O.entry*(1-1/lev);
-  const x=Math.abs(O.entry-liq)/dist;
-  document.getElementById("sizing").innerHTML=`<div class="row"><span>止损幅度</span><b>${(dist/O.entry*100).toFixed(2)}%</b></div>
-    <div class="row"><span>张数</span><b>${(qty/1000).toFixed(2)} 张</b></div>
-    <div class="row"><span>名义 / 保证金</span><b>${notional.toFixed(2)} / ${margin.toFixed(2)} U</b></div>
-    <div class="row"><span>预估强平</span><b class="${x>=3?"up":"dn"}">${liq.toFixed(5)}</b> <span class="dim">${x.toFixed(2)}×</span></div>`;
+
+function cardHTML(o){
+  const waiting=o.status==="waiting";
+  const color=waiting?"":(o.bias==="short"?"dn":"up");
+  const state=waiting?"还没到价，先不开仓":"已触发，按下面执行";
+  return `<div class="hero"><b class="${color}">${waiting?"等":(o.bias==="short"?"做空":"做多")}</b>
+    <span>${o.tf} · ${state}</span></div>
+    <div class="row"><span>${waiting?"触发价（收线）":"开单价"}</span><b>${f(o.trig)}</b></div>
+    <div class="row"><span>止损</span><b>${f(o.stop)}（${o.stopPct.toFixed(2)}%）</b></div>
+    <div class="row"><span>止盈 ${o.rr}R</span><b>${f(o.tgt)}</b></div>
+    <div class="row"><span>仓位</span><b>${o.qty.toFixed(1)} 张 · ${o.lev}x</b></div>
+    <div class="row"><span>保证金</span><b>${o.margin.toFixed(0)} U</b></div>
+    <div class="note">${waiting?`${o.tf} 收盘${o.bias==="short"?"跌破":"站上"} ${f(o.trig)} 才进。`:"按上面价位执行。"}止损打掉亏 ${o.riskU.toFixed(0)} U，强平 ${f(o.liq)}（止损距离 ${o.liqX.toFixed(1)} 倍）。</div>`;
 }
+
 async function load(){
   try{
     const g=u=>fetch(API+u).then(r=>r.json());
-    const [tk,fr,d1,h4,h1]=await Promise.all([
+    const [tk,d1,h4,h1]=await Promise.all([
       g(`/market/ticker?instId=${INST}`),
-      g(`/public/funding-rate?instId=${INST}`),
       g(`/market/candles?instId=${INST}&bar=1D&limit=300`),
       g(`/market/candles?instId=${INST}&bar=4H&limit=300`),
       g(`/market/candles?instId=${INST}&bar=1H&limit=300`)]);
-    const tf={"1D":parse(d1.data),"4H":parse(h4.data),"1H":parse(h1.data)};
-    const s={price:+tk.data[0].last,chg:(+tk.data[0].last-+tk.data[0].open24h)/+tk.data[0].open24h*100,tf:{}};
-    for(const k of ["1D","4H","1H"]){
-      const rows=tf[k],c=rows.map(r=>r.c),a=atr(rows);
-      s.tf[k]={close:c[c.length-1],ema20:ema(c,20),ema50:ema(c,50),ema200:ema(c,200),atr:a,
-        atrPct:a/c[c.length-1]*100,rsi:rsi(c)};
+    const tkd=tk.data[0], price=+tkd.last, chg=(price-+tkd.open24h)/+tkd.open24h*100;
+    document.getElementById("stamp").textContent="更新 "+new Date().toLocaleString("zh-CN",{hour12:false})+
+      " · 现价 "+f(price)+"（"+(chg>=0?"+":"")+chg.toFixed(2)+"% 24h）";
+    const sets={"1D":parse(d1.data),"4H":parse(h4.data),"1H":parse(h1.data)};
+    window.OO={};
+    for(const st of STRATS){
+      const o=build(st,sets[st.tf],3900);
+      window.OO[st.tf]=o;
+      document.getElementById(st.id).innerHTML=
+        `<span class="tag">${st.tf==="4H"?"4H 主策略 · 3% 风险":"1H 短线 · 1.5% 风险"}</span>`+cardHTML(o);
     }
-    const r4=tf["4H"],hs=r4.map(r=>r.h),ls=r4.map(r=>r.l),c4=r4[r4.length-1].c;
-    const hi20=Math.max(...hs.slice(-21,-1)),lo20=Math.min(...ls.slice(-21,-1)),a4=s.tf["4H"].atr;
-    const bias=c4>s.tf["4H"].ema200?"long":"short";
-    let trig,stop,target,status;
-    if(bias==="long"){trig=hi20;status=c4>hi20?"long":"waiting";stop=trig-2*a4;target=trig+6*a4}
-    else{trig=lo20;status=c4<lo20?"short":"waiting";stop=trig+2*a4;target=trig-6*a4}
-    O=order({bias,status,trigger:trig,stop,target},3900,3);
-    render(s);
+    document.getElementById("tfrows").innerHTML=["1D","4H","1H"].map(k=>{
+      const rows=sets[k],c=rows.map(r=>r.c),a=atr(rows);
+      return `<tr><td>${k}</td><td>${f(c[c.length-1])}</td><td>${f(ema(c,20))}</td><td>${f(ema(c,50))}</td><td>${f(ema(c,200))}</td><td>${(a/c[c.length-1]*100).toFixed(2)}%</td><td>${rsi(c).toFixed(1)}</td></tr>`;
+    }).join("");
+    sizing();
   }catch(e){
     document.getElementById("stamp").textContent="行情拉取失败："+e.message+"（稍后自动重试）";
   }
+}
+function sizing(){
+  const q=id=>+document.getElementById(id).value;
+  const o=window.OO&&window.OO["4H"]; if(!o) return;
+  const dist=Math.abs(o.trig-o.stop), risk=q("eq")*q("rp")/100, qty=risk/dist, lev=q("lev")||1;
+  const notional=qty*o.trig, margin=notional/lev;
+  const liq=o.bias==="short"?o.trig*(1+1/lev):o.trig*(1-1/lev);
+  const x=Math.abs(o.trig-liq)/dist;
+  document.getElementById("sizing").innerHTML=
+    `<div class="row"><span>止损幅度</span><b>${(dist/o.trig*100).toFixed(2)}%</b></div>
+     <div class="row"><span>张数</span><b>${(qty/1000).toFixed(2)} 张</b></div>
+     <div class="row"><span>名义 / 保证金</span><b>${notional.toFixed(0)} / ${margin.toFixed(0)} U</b></div>
+     <div class="row"><span>预估强平</span><b class="${x>=3?"up":"dn"}">${liq.toFixed(5)}</b> <span class="dim">${x.toFixed(2)}×</span></div>`;
 }
 ["eq","rp","lev"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("input",sizing)});
 load();setInterval(load,30000);
